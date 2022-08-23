@@ -1031,6 +1031,7 @@
     <Folder Include="src\config\" />
     <Folder Include="src\EER34" />
     <Folder Include="src\EER34\App" />
+    <Folder Include="src\EER34\Drivers" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\asf.h">
@@ -1876,34 +1877,34 @@
     <Compile Include="src\EER34\App\app.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_adc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_gpio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_gpio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\EER34\Drivers\eer34_spi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\EER34\eer34.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\EER34\eer34.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_adc.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_adc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_gpio.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_gpio.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_i2c.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_i2c.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_spi.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\EER34\eer34_spi.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\main.c">
