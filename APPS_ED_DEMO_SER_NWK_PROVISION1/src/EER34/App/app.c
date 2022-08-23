@@ -28,8 +28,6 @@ static enum {
 	APP_FSM_SLEEP,
 } fsm;
 
-static char line[256];
-
 /** 
  *	@brief	Callback de status para la aplicacion
  *	@param	sts			status de EER34
@@ -108,13 +106,12 @@ void EES34_appInit(void)
 	// Este seteo debe ir primero porque inicia el stack LoRaWan
 	res = EER34_setBand(ISM_AU915, 1);
 
-	// Estos seteos pueden ir en cualquier orden pero siempre
+	// Estos seteos pueden ir en cualqueir orden pero siempre
 	// despues de setear la banda (sino dan error)
 	res = EER34_setDevEui(devEuix);
 	res = EER34_setAppEui(appEuix);
 	res = EER34_setAppKey(appKeyx);
 	res = EER34_setDeviceClass(CLASS_A);
-	res = EER34_setAdr(EER34_ADR_ON);
 	
 	// Arranca tick de 10ms
 	EER34_tickStart(10);	// arranca tick de 10ms
@@ -146,8 +143,6 @@ void EES34_appInit(void)
 	EER34_I2C_begin();
 	
 	//============================================================
-	
-	EER34_getLineInit(line, sizeof(line));
 }
 
 /** 
@@ -243,9 +238,6 @@ void EES34_appTask(void)
 			uint16_t value = EER34_Adc_digitalRead ();
 			printf ( "ADC: %d\r\n", value );
 	}
-	
-	if (EER34_getLine())
-		printf("You typed: %s\r\n", line);
 		
 	switch(fsm) {
 	case APP_FSM_JOINFAILED:

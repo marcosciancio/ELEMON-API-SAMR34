@@ -52,6 +52,7 @@ void EES34_reset(void);
 void EER34_init(void);
 void EER34_tickStart(int t);
 void EER34_tickStop(void);
+int EER34_setAdr(EER34_adrMode_t adr);
 int EER34_setDevEui(uint8_t *devEui);
 int EER34_setAppEui(uint8_t *appEui);
 int EER34_setAppKey(uint8_t *appKey);
@@ -60,7 +61,7 @@ int EER34_setAppSKey(uint8_t *appSKey);
 int EER34_setNwkSKey(uint8_t *nwkSKey);
 int EER34_setDeviceClass(EdClass_t class);
 int EER34_setBand(IsmBand_t band, int subBand);
-int EER34_setAdr(EER34_adrMode_t adr);
+int EER34_getRSSI(void);
 int EER34_joinOTAA(void);
 int EER34_joinABP(void);
 int EER34_tx(EER34_txMode_t mode, int port, uint8_t *data, int len);
@@ -73,8 +74,5 @@ void EES34_appTask(void);
 void EES34_appResetCallback(unsigned int rcause);
 void EES34_enterLowPower(void);
 void EES34_exitLowPower(void);
-int EER34_getchar(void);
-void EER34_getLineInit(char *buffer, int size);
-int EER34_getLine(void);
 
 #endif /* EER34_H_ */

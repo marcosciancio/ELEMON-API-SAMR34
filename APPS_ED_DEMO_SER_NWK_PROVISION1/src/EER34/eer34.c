@@ -24,7 +24,6 @@ int EER34_txTimeout;					///< timeout del comando de transmision en ms
 StackRetStatus_t EER34_txStatus;		///< status del stack LoRaWan de la ultma transmision
 StackRetStatus_t EER34_res;
 
-
 // Variables privadas
 
 static LorawanSendReq_t lorawanSendReq;
@@ -32,11 +31,6 @@ static uint8_t txBuffer[EER34_TXBUFFER_SIZE];
 static uint8_t tickTimerId = 0xFF;
 static uint8_t txTimerId = 0xFF;
 static int tickInterval;
-static struct {
-	unsigned char *buffer;
-	int size;
-	int count;
-} lineRdr;
 
 // Prototipos privados
 
@@ -45,6 +39,26 @@ static void appDataCallback(void *appHandle, appCbParams_t *appdata);
 static void txTimerCb(void *data);
 static void tickTimerCb(void *data);
 SYSTEM_TaskStatus_t APP_TaskHandler(void);
+
+/** 
+ *	@brief	Setea el modo de ADR
+ *	@param	adr	modo de ADR: EER34_ADR_ON o EER34_ADR_OFF
+ *	@return	1 si OK, 0 si fallo
+ */
+int EER34_setAdr(EER34_adrMode_t adr)
+{
+    bool adrValue = false;
+
+	if (adr == EER34_ADR_ON)
+		adrValue = true;
+	
+	EER34_res = LORAWAN_SetAttr(ADR, &adrValue);
+	
+	if (EER34_res == LORAWAN_SUCCESS)
+		return 1;
+	
+	return 0;
+}
 
 /** 
  *	@brief	Setea el Device EUI
@@ -122,26 +136,6 @@ int EER34_setAppSKey(uint8_t *appSKey)
 }
 
 /** 
- *	@brief	Setea el modo de ADR
- *	@param	adr	modo de ADR: EER34_ADR_ON o EER34_ADR_OFF
- *	@return	1 si OK, 0 si fallo
- */
-int EER34_setAdr(EER34_adrMode_t adr)
-{
-    bool adrValue = false;
-
-	if (adr == EER34_ADR_ON)
-		adrValue = true;
-	
-	EER34_res = LORAWAN_SetAttr(ADR, &adrValue);
-	
-	if (EER34_res == LORAWAN_SUCCESS)
-		return 1;
-	
-	return 0;
-}
-
-/** 
  *	@brief	Setea el Network Session Key
  *	@param	nwkSKey	vector de 16 bytes de Application Session Key (en el orden en que se lee)
  *	@return	1 si OK, 0 si fallo
@@ -214,6 +208,18 @@ int EER34_setBand(IsmBand_t band, int subBand)
 	/// @see	processRunDemoApp(), mote_set_parameters(), processRunRestoreBand()
 
 	return 1;
+}
+
+/** 
+ *	@brief	Obtener RSSI de último paquete
+ *	@return	valor de RSSI
+ */
+int EER34_getRSSI(void)
+{
+	int rssi = 0;
+	LORAWAN_GetAttr(LAST_PACKET_RSSI, 0, &rssi);
+	rssi -= 0xffff;
+	return rssi;
 }
 
 /** 
@@ -362,60 +368,6 @@ int EER34_sleep(uint32_t time)
 #else
 	return 0;
 #endif
-}
-
-/** 
- *	@brief	Lectura de caracter del puerto serie no bloqueante
- *	@return	caracter recibido, o -1 si no hay caracteres
- */
-int EER34_getchar(void)
-{
-	return sio2host_getchar_nowait();
-}
-
-/** 
- *	@brief	Inica el lector de lineas del puerto serie
- *	@param	buffer	puntero al buffer de linea
- *	@param	size	tamaño del buffer de linea
- */
-void EER34_getLineInit(char *buffer, int size)
-{
-	lineRdr.buffer = buffer;
-	lineRdr.size = size;
-	lineRdr.count = 0;
-}
-
-/** 
- *	@brief	Lectura de linea del puerto serie no bloqueante
- *	@return	cantidad de caracteres leidos, si no entro una linea todavia
- *
- *	Deja la linea terminada en NULL y sin el caracter de fin de linea.
- */
-int EER34_getLine(void)
-{
-	int c, n;
-	
-	// Saca todos los caracteres que pueda
-	while (1) {
-		c = EER34_getchar();
-		// Si no hay mas caracteres sale
-		if (c <= 0)
-			return 0;
-		// Si encuentra fin de linea, si habian entrado caracteres
-		// cierra la linea y avisa que entro una linea
-		if (c == '\r' || c == '\n') {
-			if (lineRdr.count) {
-				lineRdr.buffer[lineRdr.count++] = 0;
-				n = lineRdr.count;
-				lineRdr.count = 0;
-				return n;
-			}
-			lineRdr.count = 0;
-		}
-		// Si no es fin de linea y hay lugar lo mete en el buffer 
-		else if (lineRdr.count < lineRdr.size-1)
-			lineRdr.buffer[lineRdr.count++] = c;
-	}
 }
 
 /** 
