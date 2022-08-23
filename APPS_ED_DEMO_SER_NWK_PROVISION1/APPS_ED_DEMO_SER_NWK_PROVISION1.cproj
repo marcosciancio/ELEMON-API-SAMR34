@@ -354,9 +354,10 @@
         <board id="board.samr34_xplained_pro" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
+    <avrtool>
+    </avrtool>
     <avrtoolserialnumber>J41800072487</avrtoolserialnumber>
-    <avrdeviceexpectedsignature>0x10810228</avrdeviceexpectedsignature>
+    <avrdeviceexpectedsignature>0x1081022B</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
