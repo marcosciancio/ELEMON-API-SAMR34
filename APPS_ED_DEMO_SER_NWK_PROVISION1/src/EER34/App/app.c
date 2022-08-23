@@ -23,6 +23,7 @@ static enum {
 	APP_FSM_TXWAIT,
 	APP_FSM_TXOK,
 	APP_FSM_TXERROR,
+	APP_FSM_TXTIMEOUT,
 	APP_FSM_IDLE,
 	APP_FSM_IDLE_TX,
 	APP_FSM_SLEEP,
@@ -48,6 +49,10 @@ void EER34_statusCallback(EER34_status_t sts, StackRetStatus_t LoraSts)
 			fsm = APP_FSM_TXOK;
 	}
 	else if (sts == EER34_STATUS_TX_TIMEOUT) {
+		if (fsm == APP_FSM_TXWAIT)
+		fsm = APP_FSM_TXTIMEOUT;
+	}
+	else if (sts == EER34_STATUS_TX_ERROR) {
 		if (fsm == APP_FSM_TXWAIT)
 		fsm = APP_FSM_TXERROR;
 	}
@@ -96,7 +101,7 @@ void EES34_appInit(void)
 {
 	static volatile int res;
 	
-	uint8_t devEuix[] = {0xDE, 0xAF, 0xFA, 0xCE, 0xDE, 0xAF, 0x55, 0x21};
+	uint8_t devEuix[] = {0xDD, 0xAD, 0xFA, 0xCE, 0xDE, 0xAF, 0x55, 0x20};
 	uint8_t appEuix[] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
 	uint8_t appKeyx[] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
 		0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
@@ -112,6 +117,8 @@ void EES34_appInit(void)
 	res = EER34_setAppEui(appEuix);
 	res = EER34_setAppKey(appKeyx);
 	res = EER34_setDeviceClass(CLASS_A);
+//	res = EER34_setAdr(EER34_ADR_ON);
+//	res = EER34_setAdr(EER34_ADR_OFF);
 	
 	// Arranca tick de 10ms
 	EER34_tickStart(10);	// arranca tick de 10ms
@@ -219,6 +226,7 @@ void EES34_appTask(void)
 
 	static int divider = 0;
 
+/*
 	divider++;
 	if ( divider == 5000 )
 	{
@@ -238,7 +246,7 @@ void EES34_appTask(void)
 			uint16_t value = EER34_Adc_digitalRead ();
 			printf ( "ADC: %d\r\n", value );
 	}
-		
+*/
 	switch(fsm) {
 	case APP_FSM_JOINFAILED:
 		printf("Join failed\r\n\r\n");
@@ -269,8 +277,13 @@ void EES34_appTask(void)
 		timer1 = 500;
 		fsm = APP_FSM_IDLE;
 		break;
-	case APP_FSM_TXERROR:
+	case APP_FSM_TXTIMEOUT:
 		printf("Transmit Timeout\r\n");
+		timer1 = 500;
+		fsm = APP_FSM_IDLE;
+		break;
+	case APP_FSM_TXERROR:
+		printf("Transmit Failed\r\n");
 		timer1 = 500;
 		fsm = APP_FSM_IDLE;
 		break;
